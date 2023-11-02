@@ -168,12 +168,13 @@ def create_conversational_turn(
     user_input, agent_response_list, triggered_intent, output_page, is_webhook_enabled
 ):
     """Create a conversational turn."""
-    turn = cx.ConversationTurn(
+    return cx.ConversationTurn(
         virtual_agent_output=cx.ConversationTurn.VirtualAgentOutput(
             current_page=output_page,
             triggered_intent=triggered_intent,
             text_responses=[
-                cx.ResponseMessage.Text(text=text) for text in agent_response_list
+                cx.ResponseMessage.Text(text=text)
+                for text in agent_response_list
             ],
         ),
         user_input=cx.ConversationTurn.UserInput(
@@ -185,5 +186,3 @@ def create_conversational_turn(
             ),
         ),
     )
-
-    return turn

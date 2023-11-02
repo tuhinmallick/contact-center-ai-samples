@@ -42,9 +42,7 @@ class MockReturnObject:  # pylint: disable=too-few-public-methods
     @property
     def text(self):
         """Mock text interface; fall back to json as string."""
-        if self._text is None:
-            return json.dumps(self.data)
-        return self._text
+        return json.dumps(self.data) if self._text is None else self._text
 
 
 def assert_response(result, status_code, expected):

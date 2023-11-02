@@ -26,9 +26,10 @@ logger = logging.getLogger(__name__)
 
 def get_project_number(token, project_id):
     """Get project number using cloudresourcemanager API."""
-    headers = {}
-    headers["Content-type"] = "application/json"
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "Content-type": "application/json",
+        "Authorization": f"Bearer {token}",
+    }
     result = requests.get(
         f"https://cloudresourcemanager.googleapis.com/v1/projects/{project_id}",
         headers=headers,
@@ -56,9 +57,10 @@ def get_access_policy_name(token, access_policy_title, project_id, error_code=20
             )
         }
 
-    headers = {}
-    headers["Content-type"] = "application/json"
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "Content-type": "application/json",
+        "Authorization": f"Bearer {token}",
+    }
     response = requests.post(
         f"https://cloudresourcemanager.googleapis.com/v1/projects/{project_id}:getAncestry",
         headers=headers,
@@ -90,8 +92,7 @@ def get_access_policy_name(token, access_policy_title, project_id, error_code=20
         return response
     project_number = response["project_number"]
 
-    headers = {}
-    headers["Content-type"] = "application/json"
+    headers = {"Content-type": "application/json"}
     headers["Authorization"] = f"Bearer {token}"
     response = requests.get(
         (
@@ -123,9 +124,10 @@ def get_service_perimeter_data_uri(
 ):
     """Get uri for for service perimeter."""
     access_policy_id = access_policy_name.split("/")[1]
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     response = requests.get(
         (
             f"https://accesscontextmanager.googleapis.com/v1/"
@@ -180,9 +182,10 @@ def get_service_perimeter_data_uri(
 
 def get_service_perimeter_status(token, project_id, access_policy_name):
     """Get service perimeter status using accesscontextmanager API."""
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     response = get_service_perimeter_data_uri(token, project_id, access_policy_name)
     if "response" in response:
         return response
@@ -243,9 +246,10 @@ def get_restricted_services_status(token, project_id, access_policy_name):
 
 def check_function_exists(token, project_id, region, function_name):
     """Check if function exists using cloudfunctions api."""
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     result = requests.get(
         (
             f"https://cloudfunctions.googleapis.com/v1/"
@@ -317,11 +321,12 @@ def check_function_exists(token, project_id, region, function_name):
     return response
 
 
-def get_agents(token, project_id, region):  # pylint: disable=too-many-branches
+def get_agents(token, project_id, region):    # pylint: disable=too-many-branches
     """Get agents using dialogflow API"""
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     if region not in ["us-central1"]:
         return {
             "response": flask.Response(
@@ -420,9 +425,10 @@ def get_agents(token, project_id, region):  # pylint: disable=too-many-branches
 
 def get_webhooks(token, agent_name, project_id, region):
     """Get webhooks using dialogflow API."""
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     result = requests.get(
         f"https://{region}-dialogflow.googleapis.com/v3/{agent_name}/webhooks",
         headers=headers,
@@ -460,13 +466,13 @@ def get_webhooks(token, agent_name, project_id, region):
 
 def get_token_and_project(request):
     """Helper method to retrieve a token or project, or return early."""
-    response = {}
     token_dict = get_token.get_token(request, token_type="access_token")
     if "response" in token_dict:
         return token_dict
-    response["token"] = token_dict["access_token"]
-
-    response["project_id"] = request.args.get("project_id", None)
+    response = {
+        "token": token_dict["access_token"],
+        "project_id": request.args.get("project_id", None),
+    }
     if not response["project_id"]:
         return {
             "response": flask.Response(

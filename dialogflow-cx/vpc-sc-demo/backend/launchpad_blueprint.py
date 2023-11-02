@@ -53,8 +53,7 @@ def validate_project_id():
         return token_dict["response"]
     access_token = token_dict["access_token"]
 
-    headers = {}
-    headers["Authorization"] = f"Bearer {access_token}"
+    headers = {"Authorization": f"Bearer {access_token}"}
     req = requests.get(
         f"https://cloudresourcemanager.googleapis.com/v1/projects/{project_id}",
         headers=headers,

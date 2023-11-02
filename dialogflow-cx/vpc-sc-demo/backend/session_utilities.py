@@ -29,11 +29,10 @@ def user_service_domain(request):
     """Helper function to get host domain (dev and prod)."""
     if request.host_url in ["http://localhost:5001/", "http://localhost:8081/"]:
         assert not is_prod()
-        domain = "user-service.localhost"
+        return "user-service.localhost"
     else:
         assert is_prod()
-        domain = urlparse(request.host_url).hostname
-    return domain
+        return urlparse(request.host_url).hostname
 
 
 def login_landing_uri(request, query_params=None):

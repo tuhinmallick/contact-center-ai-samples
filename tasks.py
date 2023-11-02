@@ -107,9 +107,8 @@ def print_result(linter, result, hide):
     if result.exited:
         print(f'linter "{linter}": FAILURE (code {result.exited})')
         print(result.stderr.strip())
-    else:
-        if not hide:
-            print(f'linter "{linter}": OK')
+    elif not hide:
+        print(f'linter "{linter}": OK')
 
 
 @task

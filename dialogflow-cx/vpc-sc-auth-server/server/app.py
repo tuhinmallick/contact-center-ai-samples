@@ -84,8 +84,7 @@ def callback():
         logger.critical("Could not create session")
         return Response(status=403)
 
-    response = redirect(redirect_path)
-    return response
+    return redirect(redirect_path)
 
 
 @app.route("/login", methods=["GET"])
