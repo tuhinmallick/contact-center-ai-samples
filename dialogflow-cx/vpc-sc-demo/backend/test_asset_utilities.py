@@ -236,7 +236,7 @@ def test_tf_init(debug, exited, request_args):  # pylint: disable=redefined-oute
         ),
     ],
 )
-def test_tf_plan(debug, message, request_args):  # pylint: disable=redefined-outer-name
+def test_tf_plan(debug, message, request_args):    # pylint: disable=redefined-outer-name
     """Test tf_plan."""
     mock_stdout = "\n".join([message])
     context = MockContext()
@@ -255,27 +255,26 @@ def test_tf_plan(debug, message, request_args):  # pylint: disable=redefined-out
 
     if debug:
         assert result is None
+    elif "error" in message:
+        assert_response(
+            result,
+            500,
+            {
+                "status": "ERROR",
+                "errors": [
+                    {"@level": "error", "type": "MOCK_TYPE", "hook": "MOCK_HOOK"}
+                ],
+            },
+        )
     else:
-        if "error" in message:
-            assert_response(
-                result,
-                500,
-                {
-                    "status": "ERROR",
-                    "errors": [
-                        {"@level": "error", "type": "MOCK_TYPE", "hook": "MOCK_HOOK"}
-                    ],
-                },
-            )
-        else:
-            assert result == {
-                "hooks": {
-                    "refresh_start": [],
-                    "refresh_complete": [],
-                    "apply_complete": [],
-                    "apply_start": [],
-                }
+        assert result == {
+            "hooks": {
+                "refresh_start": [],
+                "refresh_complete": [],
+                "apply_complete": [],
+                "apply_start": [],
             }
+        }
 
 
 @pytest.mark.hermetic
@@ -363,11 +362,11 @@ def test_tf_state_list(
                 "stderr": "MOCK_STDERR",
             },
         )
+    elif stdout == "MOCK_STDOUT":
+        assert result == {"resources": ["MOCK_STDOUT"]}
+
     else:
-        if stdout != "MOCK_STDOUT":
-            assert len(result["resources"]) == 1 + len(stdout.split())
-        else:
-            assert result == {"resources": ["MOCK_STDOUT"]}
+        assert len(result["resources"]) == 1 + len(stdout.split())
 
 
 @pytest.mark.parametrize("request_debug", ["true", "false"])

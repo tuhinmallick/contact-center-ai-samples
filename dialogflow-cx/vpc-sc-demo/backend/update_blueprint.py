@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 @update.route("/update_webhook_access", methods=["POST"])
-def update_webhook_access():  # pylint: disable=too-many-branches
+def update_webhook_access():    # pylint: disable=too-many-branches
     """Update webhook access to allow/disallow allUsers."""
     data = su.get_token_and_project(flask.request)
     if "response" in data:
@@ -41,9 +41,10 @@ def update_webhook_access():  # pylint: disable=too-many-branches
     content = flask.request.get_json(silent=True)
     internal_only = content["status"]
 
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     response = requests.get(
         (
             f"https://cloudfunctions.googleapis.com/v2/projects/{project_id}"
@@ -129,10 +130,11 @@ def update_webhook_ingress():
     webhook_name = flask.request.args["webhook_name"]
     content = flask.request.get_json(silent=True)
 
-    headers = {}
-    headers["Content-type"] = "application/json"
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "Content-type": "application/json",
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     response = requests.get(
         (
             f"https://cloudfunctions.googleapis.com/v1/projects/{project_id}"

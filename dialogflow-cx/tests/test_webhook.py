@@ -52,11 +52,9 @@ def test_validate_form(mocked_request, test_input, expected):
     """Locally tests the form validation webhook function."""
 
     # Arrange:
-    request_mapping = {}
-    request_mapping["fulfillmentInfo"] = {}
+    request_mapping = {"fulfillmentInfo": {}}
     request_mapping["fulfillmentInfo"]["tag"] = "validate_form"
-    request_mapping["pageInfo"] = {}
-    request_mapping["pageInfo"]["formInfo"] = {}
+    request_mapping["pageInfo"] = {"formInfo": {}}
     request_mapping["pageInfo"]["formInfo"]["parameterInfo"] = [
         {"displayName": "age", "value": test_input}
     ]
@@ -76,13 +74,10 @@ def test_set_session_param(mocked_request):
     # Arrange:
     mock_key = "MOCK_KEY"
     mock_val = "MOCK_VAL"
-    request_mapping = {}
-    request_mapping["fulfillmentInfo"] = {}
+    request_mapping = {"fulfillmentInfo": {}}
     request_mapping["fulfillmentInfo"]["tag"] = "set_session_param"
-    request_mapping["sessionInfo"] = {}
-    request_mapping["sessionInfo"]["parameters"] = {
-        "key": mock_key,
-        "val": mock_val,
+    request_mapping["sessionInfo"] = {
+        "parameters": {"key": mock_key, "val": mock_val}
     }
     mocked_request.payload = request_mapping
 

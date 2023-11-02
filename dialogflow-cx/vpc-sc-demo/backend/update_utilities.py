@@ -32,20 +32,20 @@ def update_service_perimeter_status_inplace(  # pylint: disable=inconsistent-ret
     if not restrict_access:
         if "restrictedServices" not in service_perimeter_status["status"]:
             return flask.Response(status=200)
-        if api not in service_perimeter_status["status"]["restrictedServices"]:
-            return flask.Response(status=200)
-        service_perimeter_status["status"]["restrictedServices"] = [
-            service
-            for service in service_perimeter_status["status"]["restrictedServices"]
-            if service != api
-        ]
-    else:
-        if "restrictedServices" not in service_perimeter_status["status"]:
-            service_perimeter_status["status"]["restrictedServices"] = [api]
-        elif api in service_perimeter_status["status"]["restrictedServices"]:
-            return flask.Response(status=200)
+        if api in service_perimeter_status["status"]["restrictedServices"]:
+            service_perimeter_status["status"]["restrictedServices"] = [
+                service
+                for service in service_perimeter_status["status"]["restrictedServices"]
+                if service != api
+            ]
         else:
-            service_perimeter_status["status"]["restrictedServices"].append(api)
+            return flask.Response(status=200)
+    elif "restrictedServices" not in service_perimeter_status["status"]:
+        service_perimeter_status["status"]["restrictedServices"] = [api]
+    elif api in service_perimeter_status["status"]["restrictedServices"]:
+        return flask.Response(status=200)
+    else:
+        service_perimeter_status["status"]["restrictedServices"].append(api)
 
 
 def get_service_perimeter_data(request):
@@ -86,9 +86,10 @@ def update_security_perimeter(request, api):
     if response:
         return response
 
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     response = su.get_service_perimeter_data_uri(token, project_id, access_policy_name)
     if "response" in response:
         return response

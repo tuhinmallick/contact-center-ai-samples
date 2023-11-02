@@ -111,7 +111,7 @@ def asset_status():  # pylint: disable=too-many-locals,too-many-return-statement
 
 
 @asset.route("/update_target", methods=["POST"])
-def update_target():  # pylint: disable=too-many-return-statements,too-many-branches
+def update_target():    # pylint: disable=too-many-return-statements,too-many-branches
     """Use terraform to update a target."""
     token_dict = get_token.get_token(flask.request, token_type="access_token")
     if "response" in token_dict:
@@ -139,11 +139,7 @@ def update_target():  # pylint: disable=too-many-return-statements,too-many-bran
     targets = content.get("targets")
     destroy = content["destroy"]
 
-    if targets == ["all"]:
-        update_targets = None
-    else:
-        update_targets = targets
-
+    update_targets = None if targets == ["all"] else targets
     ctx = context.Context()
     module = "/deploy/terraform/main.tf"
     prefix = f'terraform/{flask.request.args["project_id"]}'

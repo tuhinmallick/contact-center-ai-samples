@@ -88,9 +88,10 @@ def root() -> Response:
     app.logger.info("WEBHOOK_TRIGGER_URI: %s", audience)
     auth_req = google.auth.transport.requests.Request()
     token = id_token.fetch_id_token(auth_req, audience)
-    new_headers = {}
-    new_headers["Content-type"] = "application/json"
-    new_headers["Authorization"] = f"Bearer {token}"
+    new_headers = {
+        "Content-type": "application/json",
+        "Authorization": f"Bearer {token}",
+    }
     result = requests.post(
         audience, json=request.get_json(), headers=new_headers, timeout=10
     )

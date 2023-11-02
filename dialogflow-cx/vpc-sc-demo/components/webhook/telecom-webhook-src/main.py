@@ -21,18 +21,17 @@ import helpers
 
 def cx_prebuilt_agents_telecom(
     request,
-):  # pylint: disable=too-many-branches,too-many-statements,too-many-locals
+):    # pylint: disable=too-many-branches,too-many-statements,too-many-locals
     """Telecommunications Agent Webhook function."""
     logging.info("Cloud Function: Invoked cloud function from Dialogflow")
     request_dict = request.get_json()
 
     # Get the parameters in current page
     parameter_info_list = request_dict["pageInfo"]["formInfo"]["parameterInfo"]
-    parameter_dict = {}
-    for parameter_info in parameter_info_list:
-        key = parameter_info["displayName"]
-        parameter_dict[key] = parameter_info["value"]
-
+    parameter_dict = {
+        parameter_info["displayName"]: parameter_info["value"]
+        for parameter_info in parameter_info_list
+    }
     # Get the tag
     tag = request_dict["fulfillmentInfo"]["tag"]
 
@@ -85,7 +84,6 @@ def cx_prebuilt_agents_telecom(
 
         res = {"sessionInfo": {"parameters": updated_parameters}}
 
-    # BEGIN validatePhoneLine
     elif tag == "validatePhoneLine":
         logging.info("%s was triggered.", tag)
         phone = parameter_dict["phone_number"]
@@ -103,15 +101,17 @@ def cx_prebuilt_agents_telecom(
                 logging.info("This is the index %s", line_index)
 
         # Only 9999999999 will fail
-        if line_index == 3:
+        if line_index == 2:
+            phone_line_verified = "true"
+
+            domestic_coverage = "true"
+        elif line_index == 3:
             phone_line_verified = "false"
+            domestic_coverage = "false"
+
         else:
             phone_line_verified = "true"
 
-        # Only 1231231234 will have domestic coverage
-        if line_index == 2:
-            domestic_coverage = "true"
-        else:
             domestic_coverage = "false"
 
         res = {
@@ -123,7 +123,6 @@ def cx_prebuilt_agents_telecom(
             }
         }
 
-    # BEGIN cruisePlanCoverage
     elif tag == "cruisePlanCoverage":
         logging.info("%s was triggered.", tag)
         port = parameter_dict["destination"]
@@ -135,11 +134,7 @@ def cx_prebuilt_agents_telecom(
             "anguilla",
         ]
 
-        if port.lower() in covered_ports:
-            port_is_covered = "true"
-        else:
-            port_is_covered = "false"
-
+        port_is_covered = "true" if port.lower() in covered_ports else "false"
         res = {
             "sessionInfo": {
                 "parameters": {
@@ -148,7 +143,6 @@ def cx_prebuilt_agents_telecom(
             }
         }
 
-    # BEGIN internationalCoverage
     elif tag == "internationalCoverage":
         logging.info("%s was triggered.", tag)
         destination = parameter_dict["destination"]
@@ -210,7 +204,6 @@ def cx_prebuilt_agents_telecom(
             }
         }
 
-    # BEGIN cheapestPlan
     elif tag == "cheapestPlan":
         logging.info("%s was triggered.", tag)
         trip_duration = parameter_dict["trip_duration"]
@@ -257,7 +250,6 @@ def cx_prebuilt_agents_telecom(
             }
         }
 
-    # Default Case
     else:
         res = None
         logging.info("default case called")

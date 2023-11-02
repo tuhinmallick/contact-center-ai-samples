@@ -51,9 +51,10 @@ def webhook_ingress_internal_only_status():
     if "response" in response:
         return response["response"]
 
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     result = requests.get(
         (
             "https://cloudfunctions.googleapis.com/v1/projects/"
@@ -75,7 +76,7 @@ def webhook_ingress_internal_only_status():
 
 
 @status.route("/webhook_access_allow_unauthenticated_status", methods=["GET"])
-def webhook_access_allow_unauthenticated_status():  # pylint: disable=too-many-branches,too-many-return-statements
+def webhook_access_allow_unauthenticated_status():    # pylint: disable=too-many-branches,too-many-return-statements
     """Get boolean status of allow unauthenticated webhook access."""
     data = su.get_token_and_project(flask.request)
     if "response" in data:
@@ -88,9 +89,10 @@ def webhook_access_allow_unauthenticated_status():  # pylint: disable=too-many-b
     if "response" in response:
         return response["response"]
 
-    headers = {}
-    headers["x-goog-user-project"] = project_id
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {
+        "x-goog-user-project": project_id,
+        "Authorization": f"Bearer {token}",
+    }
     result = requests.get(
         (
             "https://cloudfunctions.googleapis.com/v2/"
@@ -179,13 +181,10 @@ def service_directory_webhook_fulfillment_status():
     agent_name = result["data"]["Telecommunications"]["name"]
     result = su.get_webhooks(token, agent_name, project_id, region)
     if "response" in result:
-        response = result["response"]
-    else:
-        webhook_dict = result["data"]["cxPrebuiltAgentsTelecom"]
-        if "serviceDirectory" in webhook_dict:
-            response = flask.Response(status=200, response=json.dumps({"status": True}))
-        else:
-            response = flask.Response(
-                status=200, response=json.dumps({"status": False})
-            )
-    return response
+        return result["response"]
+    webhook_dict = result["data"]["cxPrebuiltAgentsTelecom"]
+    return (
+        flask.Response(status=200, response=json.dumps({"status": True}))
+        if "serviceDirectory" in webhook_dict
+        else flask.Response(status=200, response=json.dumps({"status": False}))
+    )

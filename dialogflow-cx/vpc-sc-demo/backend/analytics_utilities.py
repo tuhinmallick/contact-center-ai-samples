@@ -134,8 +134,9 @@ def register_action(request, response, action, data=None):
     table = client.get_table(
         client.dataset(os.environ["ANALYTICS_DATABASE"]).table(target_database)
     )
-    insert_response = client.insert_rows_json(json_rows=[instance], table=table)
-    if insert_response:
+    if insert_response := client.insert_rows_json(
+        json_rows=[instance], table=table
+    ):
         logging.error("Error inserting into analytics database: %s", insert_response)
 
     update_visit_cookie(request, response)

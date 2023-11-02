@@ -72,11 +72,7 @@ def test_validate_project_id(  # pylint: disable=too-many-arguments
     """Test /validate_project_id endpoint."""
     endpoint = "/validate_project_id"
     requests_return_value = requests.Response()
-    if valid:
-        requests_return_value.status_code = 200
-    else:
-        requests_return_value.status_code = -1
-
+    requests_return_value.status_code = 200 if valid else -1
     with patch.object(get_token, "get_token", return_value=token_dict):
         with patch.object(requests, "get", return_value=requests_return_value):
             with app.test_client() as curr_client:

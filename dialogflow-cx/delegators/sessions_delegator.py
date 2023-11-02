@@ -65,11 +65,7 @@ class SessionsDelegator(ClientDelegator):
             ]
             current_page = response.query_result.current_page.name
             parameters = response.query_result.parameters
-            if parameters is None:
-                parameters = {}
-            else:
-                parameters = dict(parameters)
-
+            parameters = {} if parameters is None else dict(parameters)
         # Parameters that are "None" are removed from the session.
         #  drop_none_params=True performs the same behavior client-side,
         #  to stay in-sync

@@ -96,8 +96,7 @@ def get_credentials():
 
 def get_access_policy_title(token, access_policy_id):
     """Get access_policy_title using the accesscontextmanager API."""
-    headers = {}
-    headers["Authorization"] = f"Bearer {token}"
+    headers = {"Authorization": f"Bearer {token}"}
     result = requests.get(
         f"https://accesscontextmanager.googleapis.com/v1/accessPolicies/{access_policy_id}",
         headers=headers,
@@ -111,11 +110,12 @@ def get_access_policy_title(token, access_policy_id):
 
 def get_terraform_env(access_token, request_args, debug=False):
     """Build an dictionary of environment variables for terraform run."""
-    env = {}
-    env["GOOGLE_OAUTH_ACCESS_TOKEN"] = access_token
-    env["TF_VAR_project_id"] = request_args["project_id"]
-    env["TF_VAR_bucket"] = request_args["bucket"]
-    env["TF_VAR_region"] = request_args["region"]
+    env = {
+        "GOOGLE_OAUTH_ACCESS_TOKEN": access_token,
+        "TF_VAR_project_id": request_args["project_id"],
+        "TF_VAR_bucket": request_args["bucket"],
+        "TF_VAR_region": request_args["region"],
+    }
     if request_args.get("access_policy_title", None):
         response = su.get_access_policy_name(
             access_token,
@@ -335,15 +335,15 @@ def tf_state_list(context, module, workdir, env):
 
 def get_debug(request):
     """Get boolean to engage debug mode for terraform"""
-    if (request.args.get("debug") == "true") or (logging.DEBUG >= logging.root.level):
-        return True
-    return False
+    return (
+        request.args.get("debug") == "true"
+        or logging.DEBUG >= logging.root.level
+    )
 
 
 def validate_project_id(project_id, access_token):
     """Confirm if the current project_id is valid for current user."""
-    headers = {}
-    headers["Authorization"] = f"Bearer {access_token}"
+    headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(
         f"https://cloudresourcemanager.googleapis.com/v1/projects/{project_id}",
         headers=headers,

@@ -62,11 +62,10 @@ def validate_form(request):
     request_dict = request.get_json()
     parameter_info_list = request_dict["pageInfo"]["formInfo"]["parameterInfo"]
 
-    parameter_dict = {}
-    for parameter_info in parameter_info_list:
-        key = parameter_info["displayName"]
-        parameter_dict[key] = parameter_info["value"]
-
+    parameter_dict = {
+        parameter_info["displayName"]: parameter_info["value"]
+        for parameter_info in parameter_info_list
+    }
     if parameter_dict["age"] < 0:
         return json.dumps(
             {
